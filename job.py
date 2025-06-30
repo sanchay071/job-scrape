@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import pprint
 from playwright.sync_api import sync_playwright #From the sync_api module inside the playwright library, import the sync_playwright function
+import mysql.connector  # Import the mysql.connector module to connect to MySQL database
+
 # This script is designed to scrape job listings from Glassdoor for Business Analyst positions in the United States.
 
 def extract():
@@ -20,7 +22,7 @@ def extract():
         html = page.content()
         browser.close()
         return html
-
+#testing code to extract the html content
 # if __name__ == "__main__":
 #     html = extract()
 #     print(html[:1000])   
@@ -62,3 +64,25 @@ def load(job_list):
         
     df =pd.DataFrame(job_listings, index=None)
     return df
+
+def create_database(df):
+    conn = mysql.connector.connect(
+        host="localhost",
+        user = "root",
+        password = "petra",
+        database = "joblist")
+    curr = conn.cursor() #an object to iterate over the rows of a result set
+    curr.execute("""CREATE TABLE IF NOT EXISTS scraped_jobs (id INT AUTO_INCREMENT PRIMARY KEY,
+                        company VARCHAR(255),
+                        title VARCHAR(255),
+                        link VARCHAR(255),
+                        location VARCHAR(255))""")
+    
+    for _, row in df.iterrows():
+        curr.execute("""INSERT INTO scraped_jobs (company, title, link, location)
+                      VALUES (%s, %s, %s, %s)""", 
+                      (row['company'], row['title'], row['link'], row['location']))
+    
+    conn.commit()  # Commit the changes to the database
+    print("Data inserted successfully.")
+    conn.close()  # Close the connection to the database
