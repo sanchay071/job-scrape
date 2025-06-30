@@ -21,8 +21,11 @@ def extract():
     
         job_location_encoded = urllib.parse.quote(job_location_hyphenated)
         search_term_encoded = urllib.parse.quote(search_term_hyphenated)
+        
+        keyword_start = len(job_location_hyphenated) + 1 #calcuating the Keyword Offset(KO) in glass door URL. This is will fetch the starting index for the search term
+        keyword_end = keyword_start + len(search_term_hyphenated) #keyword_end will fetch the end index of the search term in the URL
         # Generate the URL
-        final_url = f"https://www.glassdoor.com/Job/{job_location_encoded}-{search_term_encoded}-jobs-SRCH_IL.0,13_IN1_KO14,31.htm?sortBy=date_desc"
+        final_url = f"https://www.glassdoor.com/Job/{job_location_encoded}-{search_term_encoded}-jobs-SRCH_IL.0,13_IN1_KO{keyword_start},{keyword_end}.htm?sortBy=date_desc"
 
         # Print the URL to the console
         print("Generated URL:", final_url)
