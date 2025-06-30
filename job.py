@@ -27,43 +27,38 @@ def extract():
 
 def transform(html):
     soup = BeautifulSoup(html, "html.parser")
-    job_list = soup.find_all("div", {"class" : "jobCard"}) # Find all divs with class jobContainer
-    # pprint.pprint(job_list)
-    # print(html[:1000])
-    return job_list
+    return soup.find_all("div", {"class" : "jobCard"}) # Find all divs with class jobContainer
     
-html = extract()
-transform(html)
+def load(job_list):
+    # This function processes the job listings and extracts relevant information.
+    # It returns a list of dictionaries containing job details.
     
-html = extract()
-job_list = transform(html)
+    # Initialize an empty list to hold job postings
 
-job_listings = []
+    job_listings = []
 
-for job in job_list:
-    job_posting = {}
-    
-    try:
-        job_posting['company'] = job.find("span", {"class": "EmployerProfile_compactEmployerName__9MGcV"}).text.strip()
-    except:
-        job_posting['company'] = None
-    try:
-        job_title_element = job.find("a", {"class": "JobCard_jobTitle__GLyJ1"})
-        job_posting['title'] = job_title_element.text.strip()
-        job_posting['link'] = job_title_element['href']  # Extract the href attribute
-    except:
-        job_posting['title'] = None
-        job_posting['link'] = None
-    try:
-        job_posting['location'] = job.find("div", {"JobCard_location__Ds1fM"}).text.strip()
-    except:
-        job_posting['location'] = None
-    
-    job_listings.append(job_posting)
-    
-pprint.pprint(job_listings)
-
-
-def load():
-    
-    pass
+    for job in job_list:
+        job_posting = {}
+        
+        try:
+            job_posting['company'] = job.find("span", {"class": "EmployerProfile_compactEmployerName__9MGcV"}).text.strip()
+        except:
+            job_posting['company'] = None
+        try:
+            job_title_element = job.find("a", {"class": "JobCard_jobTitle__GLyJ1"})
+            job_posting['title'] = job_title_element.text.strip()
+            job_posting['link'] = job_title_element['href']  # Extract the href attribute
+        except:
+            job_posting['title'] = None
+            job_posting['link'] = None
+        try:
+            job_posting['location'] = job.find("div", {"JobCard_location__Ds1fM"}).text.strip()
+        except:
+            job_posting['location'] = None
+        
+        job_listings.append(job_posting)
+        
+        # pprint.pprint(job_listings)
+        
+    df =pd.DataFrame(job_listings, index=None)
+    return df
