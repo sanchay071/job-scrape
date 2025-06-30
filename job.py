@@ -1,5 +1,6 @@
 
 import requests
+import urllib.parse
 from bs4 import BeautifulSoup
 import pandas as pd
 import pprint
@@ -11,13 +12,25 @@ import mysql.connector  # Import the mysql.connector module to connect to MySQL 
 def extract():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True) #p is the instance of playwright, p.chromium is browser type, p.chromium.launch() launches the browser in headless mode
-        context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+        context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36") #create a new browser context with a specific user agent to mimic a real browser
         page = context.new_page() # Create a new page in the browser context
-        page.goto("https://www.glassdoor.com/Job/united-states-business-analyst-jobs-SRCH_IL.0,13_IN1_KO14,30.htm?sortBy=date_desc")
+        job_location = input("Enter Job Location:") # Prompt user for job location input
+        search_term = input("Enter Title:") # Prompt user for job title input
+        job_location_hyphenated = job_location.replace(" ", "-")
+        search_term_hyphenated = search_term.replace(" ", "-")
+    
+        job_location_encoded = urllib.parse.quote(job_location_hyphenated)
+        search_term_encoded = urllib.parse.quote(search_term_hyphenated)
+        # Generate the URL
+        final_url = f"https://www.glassdoor.com/Job/{job_location_encoded}-{search_term_encoded}-jobs-SRCH_IL.0,13_IN1_KO14,31.htm?sortBy=date_desc"
+
+        # Print the URL to the console
+        print("Generated URL:", final_url)
+        
+        page.goto(final_url)
     
         # Wait for the specific element to load
         page.wait_for_selector("div.jobCard")
-        
         
         html = page.content()
         browser.close()
