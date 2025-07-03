@@ -86,7 +86,7 @@ def create_database(df):
         host="localhost",
         user = "root",
         password = "petra",
-        database = "joblist")
+        database = "joblist") #from mysql library import connector module and connect method
     curr = conn.cursor() #an object to iterate over the rows of a result set
     curr.execute("""CREATE TABLE IF NOT EXISTS scraped_jobs (id INT AUTO_INCREMENT PRIMARY KEY,
                         company VARCHAR(255),
@@ -101,4 +101,11 @@ def create_database(df):
     
     conn.commit()  # Commit the changes to the database
     print("Data inserted successfully.")
+    
+    #extract data
+    curr.execute("""SELECT * from scraped_jobs ORDER BY id DESC""") #execute the SQL query to select all records from the scraped_jobs table""")
+    rows = curr.fetchall()
+    
+    for row in rows:
+        print (row)
     conn.close()  # Close the connection to the database
