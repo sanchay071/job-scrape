@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset ="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Latest Job List</title>
+        <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" type="text/css" rel="stylesheet">
+        <link href="{{url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css">
+    </head>
+<body>
+    <header>Latest Job List</header>
+    <main>
+        <form method="POST">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" placeholder="Enter location" required>
+            <label for="job_title">Job Title:</label>
+            <input type="text" id="job_title" name="job_title" placeholder="Enter job title" required>
+            <button type="search" value="Search">Search</button>
+        </form>
+
+        {% if table %}
+            <h2>Job Listings</h2>
+            {{table|safe}}
+        {% endif %}
+    </main>
+</body>
+</html>

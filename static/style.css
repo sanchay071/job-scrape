@@ -1,0 +1,16 @@
+body{
+    font-family: 'Lora', serif;
+    margin: 20px;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    /* other styles */
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
