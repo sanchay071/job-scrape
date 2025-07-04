@@ -5,4 +5,5 @@ if __name__ == "__main__":
     job_list = transform(html)
     df = load(job_list)
     print(df)  # Display the DataFrame with job listings
-    create_database(df)  # Create the database with the job listings
+    df_db = create_database(df)  # Create the database with the job listings
+    print(df_db)

@@ -9,13 +9,13 @@ import mysql.connector  # Import the mysql.connector module to connect to MySQL 
 
 # This script is designed to scrape job listings from Glassdoor for Business Analyst positions in the United States.
 
-def extract():
+def extract(job_location, search_term):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True) #p is the instance of playwright, p.chromium is browser type, p.chromium.launch() launches the browser in headless mode
         context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36") #create a new browser context with a specific user agent to mimic a real browser
         page = context.new_page() # Create a new page in the browser context
-        job_location = input("Enter Job Location:") # Prompt user for job location input
-        search_term = input("Enter Title:") # Prompt user for job title input
+        # job_location = input("Enter Job Location:") # Prompt user for job location input
+        # search_term = input("Enter Title:") # Prompt user for job title input
         job_location_hyphenated = job_location.replace(" ", "-")
         search_term_hyphenated = search_term.replace(" ", "-")
     
@@ -103,9 +103,10 @@ def create_database(df):
     print("Data inserted successfully.")
     
     #extract data
-    curr.execute("""SELECT * from scraped_jobs ORDER BY id DESC""") #execute the SQL query to select all records from the scraped_jobs table""")
+    curr.execute("SELECT * from scraped_jobs ORDER BY id DESC LIMIT 30") #execute the SQL query to select all records from the scraped_jobs table""")
     rows = curr.fetchall()
     
     for row in rows:
         print (row)
-    conn.close()  # Close the connection to the database
+    df_db = pd.DataFrame(rows, columns=['id', 'company', 'title', 'link', 'location'], index= None) 
+    return df_db  # Return the DataFrame containing the data from the database
