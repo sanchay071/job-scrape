@@ -91,11 +91,11 @@ def create_database(df):
     curr.execute("""CREATE TABLE IF NOT EXISTS scraped_jobs (id INT AUTO_INCREMENT PRIMARY KEY,
                         company VARCHAR(255),
                         title VARCHAR(255),
-                        link VARCHAR(255),
+                        link VARCHAR(255) UNIQUE,
                         location VARCHAR(255))""")
     
     for _, row in df.iterrows():
-        curr.execute("""INSERT INTO scraped_jobs (company, title, link, location)
+        curr.execute("""INSERT IGNORE INTO scraped_jobs (company, title, link, location)
                       VALUES (%s, %s, %s, %s)""", 
                       (row['company'], row['title'], row['link'], row['location']))
     
@@ -103,7 +103,7 @@ def create_database(df):
     print("Data inserted successfully.")
     
     #extract data
-    curr.execute("SELECT * from scraped_jobs ORDER BY id DESC LIMIT 30") #execute the SQL query to select all records from the scraped_jobs table""")
+    curr.execute("SELECT * from scraped_jobs ORDER BY id DESC") #execute the SQL query to select all records from the scraped_jobs table""")
     rows = curr.fetchall()
     
     for row in rows:
