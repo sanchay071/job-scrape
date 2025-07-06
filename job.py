@@ -95,9 +95,11 @@ def create_database(df):
                         location VARCHAR(255))""")
     
     for _, row in df.iterrows():
-        curr.execute("""INSERT IGNORE INTO scraped_jobs (company, title, link, location)
-                      VALUES (%s, %s, %s, %s)""", 
-                      (row['company'], row['title'], row['link'], row['location']))
+        curr.execute("SELECT id FROM scraped_jobs WHERE link=%s", (row['link'],))
+        if not curr.fetchone():
+            curr.execute("""INSERT IGNORE INTO scraped_jobs (company, title, link, location)
+                        VALUES (%s, %s, %s, %s)""", 
+                        (row['company'], row['title'], row['link'], row['location']))
     
     conn.commit()  # Commit the changes to the database
     print("Data inserted successfully.")
