@@ -21,7 +21,55 @@
         {% if table %}
             <h2>Job Listings</h2>
             {{table|safe}}
+            <div class="pagination"></div>
         {% endif %}
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.querySelector('.table');
+            const itemsPerPage = 20;
+            let currentPage = 0;
+            const items = Array.from(content.getElementsByTagName('tr')).slice(1); // Exclude header row
+            const paginationContainer = document.querySelector('.pagination'); // Add a container for buttons
+    
+            // Render items for the current page
+            function renderPage(page) {
+                const startIndex = page * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                items.forEach((item, index) => {
+                    item.classList.toggle('hidden', index < startIndex || index >= endIndex);
+                });
+                currentPage = page;
+                updateActiveButtonStates();
+            }
+    
+            // Create pagination buttons
+            function CreatePageButtons() {
+                const totalPages = Math.ceil(items.length / itemsPerPage);
+                paginationContainer.innerHTML = ''; // Clear existing buttons
+    
+                for (let i = 0; i < totalPages; i++) {
+                    const button = document.createElement('button');
+                    button.textContent = i + 1;
+                    button.classList.add('page-button');
+                    if (i === currentPage) button.classList.add('active');
+                    button.addEventListener('click', () => renderPage(i));
+                    paginationContainer.appendChild(button);
+                }
+            }
+    
+            // Update active button states
+            function updateActiveButtonStates() {
+                const buttons = paginationContainer.querySelectorAll('.page-button');
+                buttons.forEach((button, index) => {
+                    button.classList.toggle('active', index === currentPage);
+                });
+            }
+    
+            // Initialize pagination
+            CreatePageButtons();
+            renderPage(0); // Render the first page
+        });
+    </script>
 </body>
 </html>
